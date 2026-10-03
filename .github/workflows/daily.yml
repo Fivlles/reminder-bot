@@ -1,0 +1,27 @@
+name: Daily reminders
+
+on:
+  schedule:
+    - cron: "0 6 * * *"     # Κάθε μέρα στις 06:00 UTC (09:00 Ελλάδα το καλοκαίρι, 08:00 τον χειμώνα)
+  workflow_dispatch:         # Κουμπί για χειροκίνητη εκτέλεση
+
+jobs:
+  send-reminders:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Κατέβασμα του κώδικα
+        uses: actions/checkout@v5
+
+      - name: Χτίσιμο του Docker image
+        run: docker build -t reminder-bot .
+
+      - name: Εκτέλεση του bot
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          docker run --rm \
+            -e RUN_ONCE=true \
+            -e TELEGRAM_TOKEN \
+            -e TELEGRAM_CHAT_ID \
+            reminder-bot

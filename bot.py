@@ -14,10 +14,9 @@ token = os.environ["TELEGRAM_TOKEN"]
 chat_id = os.environ["TELEGRAM_CHAT_ID"]
 url = f"https://api.telegram.org/bot{token}/sendMessage"
 
-# Τι ώρα θα στέλνει (από το .env, αλλιώς 09:00)
 SEND_TIME = os.environ.get("SEND_TIME", "09:00")
+RUN_ONCE = os.environ.get("RUN_ONCE", "false").lower() == "true"
 
-# Το reminders.json βρίσκεται στον ίδιο φάκελο με το bot.py
 REMINDERS_FILE = Path(__file__).parent / "reminders.json"
 
 
@@ -66,4 +65,7 @@ def run_scheduler():
 
 
 if __name__ == "__main__":
-    run_scheduler()
+    if RUN_ONCE:
+        main()
+    else:
+        run_scheduler()
