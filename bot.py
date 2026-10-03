@@ -29,7 +29,10 @@ def send_message(text):
     """Στέλνει ένα μήνυμα στο Telegram και επιστρέφει True αν πέτυχε."""
     params = {"chat_id": chat_id, "text": text}
     response = requests.get(url, params=params, timeout=10)
-    return response.json().get("ok", False)
+    data = response.json()
+    if not data.get("ok"):
+        log(f"Σφάλμα Telegram: {data.get('error_code')} - {data.get('description')}")
+    return data.get("ok", False)
 
 
 def load_reminders():
